@@ -8,6 +8,7 @@ import com.example.data.repository.RaceDataRepository
 import com.example.ml.LapTimePredictor
 import com.example.ml.StrategyOptimizer
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -24,6 +25,34 @@ class ExampleRobolectricTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val appName = context.getString(R.string.app_name)
         assertEquals("AI Race Strategist", appName)
+    }
+
+    @Test
+    fun `create session supports championships seasons and data provenance`() {
+        val f1Session = RaceDataRepository.createSession(
+            championship = "Formula 1",
+            season = 2024,
+            circuitId = "silverstone",
+            sessionType = "Race (Grand Prix)",
+            driverCode = "NOR",
+            isSynthetic = false
+        )
+        assertEquals("Formula 1", f1Session.championship)
+        assertEquals(2024, f1Session.season)
+        assertEquals("silverstone", f1Session.circuit.id)
+        assertFalse(f1Session.isSynthetic)
+        assertTrue(f1Session.dataProvenance.contains("FastF1"))
+
+        val syntheticSession = RaceDataRepository.createSession(
+            championship = "Formula 1",
+            season = 2023,
+            circuitId = "monza",
+            sessionType = "Sprint Race",
+            driverCode = "VER",
+            isSynthetic = true
+        )
+        assertTrue(syntheticSession.isSynthetic)
+        assertTrue(syntheticSession.dataProvenance.contains("Synthetic"))
     }
 
     @Test
@@ -44,7 +73,8 @@ class ExampleRobolectricTest {
             tireAge = 25
         )
 
-        assertTrue("Worn tire degradation should exceed fresh tire degradation",
+        assertTrue(
+            "Worn tire degradation should exceed fresh tire degradation",
             wornTirePrediction.tireDegradationSeconds > freshTirePrediction.tireDegradationSeconds
         )
     }

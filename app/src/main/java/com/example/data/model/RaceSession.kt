@@ -13,6 +13,8 @@ data class GrandPrixCircuit(
     val id: String,
     val name: String,
     val location: String,
+    val countryCode: String,
+    val roundNumber: Int,
     val totalLaps: Int,
     val circuitLengthKm: Float,
     val baseQualifyingLapTime: Float, // in seconds
@@ -20,6 +22,7 @@ data class GrandPrixCircuit(
     val safetyCarPitLossSeconds: Float,  // pit loss under SC / VSC
     val tireDegradationSeverity: String, // "High", "Medium", "Low"
     val overtakingDifficulty: String,    // "High", "Medium", "Low"
+    val tireAllocation: String = "C2 / C3 / C4",
     val defaultWeather: SessionWeather
 )
 
@@ -46,5 +49,7 @@ data class RaceSession(
     val driver: Driver,
     val weather: SessionWeather,
     val isSynthetic: Boolean = false,
-    val dataProvenance: String = "FastF1 Telemetry Archive (Synced & Validated)"
+    val dataProvenance: String = "FastF1 Telemetry Archive (Synced & Validated)",
+    val cacheStatus: String = "Local Telemetry Cache Active (No Latency)",
+    val dataFidelity: String = "100 Hz GPS + Engine RPM + Throttle"
 )

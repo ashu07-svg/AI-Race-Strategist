@@ -19,15 +19,12 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.DonutLarge
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.TableRows
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.Tune
@@ -58,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.data.repository.RaceDataRepository
 import com.example.ui.components.MotorsportHeader
+import com.example.ui.components.RaceSessionSelector
 import com.example.ui.tabs.DataExplorerTab
 import com.example.ui.tabs.LapPredictionTab
 import com.example.ui.tabs.ModelEvaluationTab
@@ -65,7 +63,6 @@ import com.example.ui.tabs.OverviewTab
 import com.example.ui.tabs.StrategyOptimizerTab
 import com.example.ui.tabs.TireDegradationTab
 import com.example.ui.theme.CockpitMuted
-import com.example.ui.theme.CockpitSubtle
 import com.example.ui.theme.CockpitWhite
 import com.example.ui.theme.F1Red
 import com.example.ui.theme.RaceBackground
@@ -82,7 +79,10 @@ fun RaceStrategistApp(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDriverPicker by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    var showSessionSelector by remember { mutableStateOf(false) }
+
+    val driverSheetState = rememberModalBottomSheetState()
+    val sessionSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
     // Back button handling: return to Overview if in other tabs
@@ -134,7 +134,7 @@ fun RaceStrategistApp(
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CockpitWhite,
                             selectedTextColor = TelemetryCyan,
-                            unselectedIconColor = CockpitSubtle,
+                            unselectedIconColor = CockpitMuted,
                             unselectedTextColor = CockpitMuted,
                             indicatorColor = F1Red
                         ),
@@ -149,12 +149,13 @@ fun RaceStrategistApp(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Header with telemetry stats and safety car switch
+            // Header with telemetry stats and session selector trigger
             MotorsportHeader(
                 session = uiState.session,
                 isSafetyCarActive = uiState.isSafetyCarActive,
                 onToggleSafetyCar = { viewModel.toggleSafetyCar() },
-                onToggleDemoMode = { viewModel.toggleDemoMode() }
+                onToggleDemoMode = { viewModel.toggleDemoMode() },
+                onOpenSessionSelector = { showSessionSelector = true }
             )
 
             // Driver Selector Strip
@@ -206,7 +207,8 @@ fun RaceStrategistApp(
                         isAiLoading = uiState.isAiLoading,
                         onConsultAi = { viewModel.consultAi(it) },
                         onSelectCircuit = { viewModel.selectCircuit(it) },
-                        onSelectDriver = { viewModel.selectDriver(it) }
+                        onSelectDriver = { viewModel.selectDriver(it) },
+                        onOpenSessionSelector = { showSessionSelector = true }
                     )
 
                     AppTab.STRATEGY -> StrategyOptimizerTab(
@@ -239,11 +241,35 @@ fun RaceStrategistApp(
         }
     }
 
+    // Full Race Session & Telemetry Provenance Selector Bottom Sheet
+    if (showSessionSelector) {
+        ModalBottomSheet(
+            onDismissRequest = { showSessionSelector = false },
+            sheetState = sessionSheetState,
+            containerColor = RaceSurface
+        ) {
+            RaceSessionSelector(
+                currentSession = uiState.session,
+                onSessionSelected = { champ, season, circuitId, sType, isSynthetic ->
+                    viewModel.applySessionSelection(champ, season, circuitId, sType, isSynthetic)
+                    scope.launch { sessionSheetState.hide() }.invokeOnCompletion {
+                        showSessionSelector = false
+                    }
+                },
+                onDismiss = {
+                    scope.launch { sessionSheetState.hide() }.invokeOnCompletion {
+                        showSessionSelector = false
+                    }
+                }
+            )
+        }
+    }
+
     // Driver Selection Bottom Sheet
     if (showDriverPicker) {
         ModalBottomSheet(
             onDismissRequest = { showDriverPicker = false },
-            sheetState = sheetState,
+            sheetState = driverSheetState,
             containerColor = RaceSurface
         ) {
             Column(
@@ -272,7 +298,7 @@ fun RaceStrategistApp(
                             .border(1.dp, if (isSelected) F1Red else RaceSurfaceBorder, RoundedCornerShape(8.dp))
                             .clickable {
                                 viewModel.selectDriver(driver.code)
-                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                scope.launch { driverSheetState.hide() }.invokeOnCompletion {
                                     showDriverPicker = false
                                 }
                             }

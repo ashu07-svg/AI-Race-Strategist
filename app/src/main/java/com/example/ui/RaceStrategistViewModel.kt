@@ -44,7 +44,7 @@ class RaceStrategistViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         RaceStrategistUiState(
-            session = RaceDataRepository.createSession("monza", "VER", isSynthetic = false),
+            session = RaceDataRepository.createSession(circuitId = "monza", driverCode = "VER", isSynthetic = false),
             config = SimulationConfig(totalLaps = 53, pitLaneLossSeconds = 23.5f)
         )
     )
@@ -53,6 +53,37 @@ class RaceStrategistViewModel : ViewModel() {
     init {
         recalculateRaceState()
         consultAi(null)
+    }
+
+    fun applySessionSelection(
+        championship: String,
+        season: Int,
+        circuitId: String,
+        sessionType: String,
+        isSynthetic: Boolean
+    ) {
+        val newSession = RaceDataRepository.createSession(
+            championship = championship,
+            season = season,
+            circuitId = circuitId,
+            sessionType = sessionType,
+            driverCode = _uiState.value.session.driver.code,
+            isSynthetic = isSynthetic
+        )
+        _uiState.update {
+            it.copy(
+                session = newSession,
+                config = it.config.copy(
+                    totalLaps = newSession.circuit.totalLaps,
+                    pitLaneLossSeconds = newSession.circuit.averagePitLaneLossSeconds,
+                    safetyCarPitLossSeconds = newSession.circuit.safetyCarPitLossSeconds,
+                    safetyCarLap = null
+                ),
+                isSafetyCarActive = false
+            )
+        }
+        recalculateRaceState()
+        consultAi("Session loaded: $season ${newSession.circuit.name} ($sessionType). Evaluate optimal pit window.")
     }
 
     fun selectCircuit(circuitId: String) {

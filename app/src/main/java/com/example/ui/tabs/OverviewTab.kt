@@ -61,6 +61,7 @@ fun OverviewTab(
     onConsultAi: (String?) -> Unit,
     onSelectCircuit: (String) -> Unit,
     onSelectDriver: (String) -> Unit,
+    onOpenSessionSelector: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val optimalStrategy = strategies.firstOrNull()
@@ -73,14 +74,29 @@ fun OverviewTab(
     ) {
         item {
             Spacer(modifier = Modifier.height(4.dp))
-            // Quick Circuit Selector
-            Text(
-                text = "GRAND PRIX CIRCUIT",
-                color = CockpitMuted,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
+            // Quick Circuit Selector with Session Config button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "GRAND PRIX CIRCUIT",
+                    color = CockpitMuted,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    text = "SESSION & DATA SETTINGS ⚙",
+                    color = TelemetryCyan,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .testTag("overview_open_session_selector")
+                        .clickable { onOpenSessionSelector() }
+                )
+            }
             Spacer(modifier = Modifier.height(6.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(RaceDataRepository.circuits) { circuit ->
