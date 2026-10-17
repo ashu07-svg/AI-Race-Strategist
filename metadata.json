@@ -1,0 +1,6 @@
+{
+  "name": "AI Race Strategist",
+  "description": "AI-powered motorsport race strategy prediction system with lap-time modeling, tire degradation analytics, pit-stop optimization, and pit wall AI intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

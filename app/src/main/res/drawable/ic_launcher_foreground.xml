@@ -1,0 +1,65 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Telemetry dynamic trace curves -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M24,42 Q38,28 54,38 T84,32"
+        android:strokeColor="#00F0FF"
+        android:strokeLineCap="round"
+        android:strokeWidth="2.8" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M24,48 Q40,36 56,44 T84,40"
+        android:strokeColor="#FF1801"
+        android:strokeLineCap="round"
+        android:strokeWidth="1.8" />
+
+    <!-- Stylized F1 car silhouette (aerodynamic profile) -->
+    <!-- Rear wing -->
+    <path
+        android:fillColor="#E10600"
+        android:pathData="M26,50 L32,50 L31,56 L25,56 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M23,49 L34,49 L34,51 L23,51 Z" />
+    <!-- Engine cover & Halo & Cockpit -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,54 C36,52 42,51 48,51 C52,48 55,48 58,51 C64,52 70,55 78,57 L78,61 L32,61 Z" />
+    <!-- Front wing & nose cone -->
+    <path
+        android:fillColor="#E10600"
+        android:pathData="M76,57 L85,61 L85,63 L74,63 Z" />
+    <!-- Front wing endplate -->
+    <path
+        android:fillColor="#00F0FF"
+        android:pathData="M83,58 L87,58 L87,64 L83,64 Z" />
+    <!-- Rear tire -->
+    <path
+        android:fillColor="#11141A"
+        android:pathData="M33,63 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0"
+        android:strokeColor="#FFD700"
+        android:strokeWidth="2.5" />
+    <!-- Front tire -->
+    <path
+        android:fillColor="#11141A"
+        android:pathData="M73,63 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0"
+        android:strokeColor="#FFD700"
+        android:strokeWidth="2.5" />
+
+    <!-- Pit stop stopwatch / strategy star target -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,68 L54,76 M46,72 L62,72"
+        android:strokeColor="#E10600"
+        android:strokeLineCap="round"
+        android:strokeWidth="2" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,72 m-9,0 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.6" />
+</vector>
